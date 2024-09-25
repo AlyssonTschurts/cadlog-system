@@ -1,24 +1,27 @@
 <?php
-<class UserController
+ 
+require_once 'models/database.php';
+ 
+class user
 {
-    // função para registrar um novo usuario
-    public function registrer(){
-        // Verifica se a requisiçao HTTP é do tipo POST
-        if ($_server['RESQUEST_METHOD'] == 'POSTA'){
-             $data = {
-                'nome' => $_POST['nome']
-                'email' => $_POST['email']
-                'senha' => passoword_hash($_POST['senha'], PASSOWORD_DEFAULT,)
-                'perfil'=> $_POST['perfil']
-             };
-
-             user::create($data);
-             header('location: index.php');
-             else{
-                include 'views/register.php';
-             }
-        }
+    public static function FindByEmail($email){
+        $comn = Database::getComnction();
+        $stmt = $comn->prepare("SELECT * FROM usuarios WHERE email = :email");
+        $stmt->execute(['email' => $email]);
+        return $stmt->Fetch(PDO::FETCH_ASSOC);
+    }
+ 
+    public static function Find($id){
+        $comn = Database::getComnction();
+        $stmt = $comn->prepare("SELECT * FROM usuarios WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->Fetch(PDO::FETCH_ASSOC);
+    }
+ 
+    static public function create($data){
+        $comn = Database::getComnction();
+        $stmt = $comn->prepare("INSERT INTO usuarios(nome, email, senha, perfil)VALUES (:nome, :email, :senha, :perfil)");
+        $stmt->execute($data);
+   
     }
 }
-
-?>
